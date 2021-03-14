@@ -87,6 +87,10 @@ class Tile(object):
         self.title = title
         self.color = color
         self.border_color = border_color
+        self._terminal = Terminal()
+        print(self._terminal.clear()
+        # tbox = TBox(t, 0, 0, t.width, t.height - 1)
+        # self._fill_area(tbox.t, 0, 0, t.width, t.height - 1, "f")  # FIXME
 
     def _display(self, tbox, parent):
         """Render current tile
@@ -143,13 +147,7 @@ class Tile(object):
         """Render current tile and its items. Recurse into nested splits
         if any.
         """
-        try:
-            t = self._terminal
-        except AttributeError:
-            t = self._terminal = Terminal()
-            tbox = TBox(t, 0, 0, t.width, t.height - 1)
-            self._fill_area(tbox.t, 0, 0, t.width, t.height - 1, "f")  # FIXME
-
+        t = self._terminal
         tbox = TBox(t, 0, 0, t.width, t.height - 1)
         self._display(tbox, None)
         # park cursor in a safe place and reset color
@@ -242,10 +240,10 @@ class Text(Tile):
                 + line
                 + " " * (tbox.w - len(line))
             )
-        dx += 1
-        while dx < tbox.h:
-            print(tbox.t.move(tbox.x + dx, tbox.y) + " " * tbox.w)
             dx += 1
+            while dx < tbox.h:
+                print(tbox.t.move(tbox.x + dx, tbox.y) + " " * tbox.w)
+                dx += 1
 
 
 class Log(Tile):
@@ -266,9 +264,9 @@ class Log(Tile):
             line = self.logs[start + i]
             print(tbox.t.move(tbox.x + i, tbox.y) + line + " " * (tbox.w - len(line)))
 
-        if i < tbox.h:
-            for i2 in range(i + 1, tbox.h):
-                print(tbox.t.move(tbox.x + i2, tbox.y) + " " * tbox.w)
+            if i < tbox.h:
+                for i2 in range(i + 1, tbox.h):
+                    print(tbox.t.move(tbox.x + i2, tbox.y) + " " * tbox.w)
 
     def append(self, msg):
         """Append a new log message at the bottom"""
